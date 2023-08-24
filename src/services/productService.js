@@ -10,4 +10,8 @@ export default class ProductService{
     getProductDetails(id){
         return axios.get(this.baseUrl + id)
     }
+
+    createProduct(product){
+        return axios.post(this.baseUrl, product)
+    }
 }

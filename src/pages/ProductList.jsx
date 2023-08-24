@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import { Icon, Menu, Table } from 'semantic-ui-react'
+import { Button, Icon, Menu, Table } from 'semantic-ui-react'
 import ProductService from '../services/productService'
 import { Link } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addToCart } from '../store/actions/cartActions';
+import { toast } from 'react-toastify';
 
 export default function ProductList() {
 
+  const dispatch = useDispatch()
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -13,6 +17,11 @@ export default function ProductList() {
     productService.getProducts().then(result => setProducts(result.data))
   })
 
+
+  function handleAddToCart(product){
+    dispatch(addToCart(product));
+    toast.success(`${product.name} sepete eklendi`);
+  }
 
   return (
     <div>
@@ -23,17 +32,19 @@ export default function ProductList() {
             <Table.HeaderCell>Birim Fiyat</Table.HeaderCell>
             <Table.HeaderCell>Stok Adedi</Table.HeaderCell>
             <Table.HeaderCell>Açıklama</Table.HeaderCell>
+            <Table.HeaderCell></Table.HeaderCell>
           </Table.Row>
         </Table.Header>
 
         <Table.Body>
           {
-            products.map((p) => (
-              <Table.Row key={p.id}>
-                <Table.Cell><Link to={`/products/${p.id}`}>{p.name}</Link></Table.Cell>
-                <Table.Cell>{p.unitPrice}</Table.Cell>
-                <Table.Cell>{p.unitsInStock}</Table.Cell>
-                <Table.Cell>{p.quantityPerUnit}</Table.Cell>
+            products.map((product) => (
+              <Table.Row key={product.id}>
+                <Table.Cell><Link to={`/products/${product.id}`}>{product.name}</Link></Table.Cell>
+                <Table.Cell>{product.unitPrice}</Table.Cell>
+                <Table.Cell>{product.unitsInStock}</Table.Cell>
+                <Table.Cell>{product.quantityPerUnit}</Table.Cell>
+                <Table.Cell><Button positive onClick={() => handleAddToCart(product)}>Sepete Ekle</Button></Table.Cell>
               </Table.Row>
             ))
           }
